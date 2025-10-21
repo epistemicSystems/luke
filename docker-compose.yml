@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  # API Server
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - GRAPH_DATA_DIR=/app/data/graph
+      - CHROMA_PERSIST_DIR=/app/data/chroma
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - DISCORD_TOKEN=${DISCORD_TOKEN}
+    volumes:
+      - ./data:/app/data
+      - ./.env:/app/.env
+    command: python -m uvicorn insight_graph.api.server:app --host 0.0.0.0 --port 8000
+    restart: unless-stopped
+
+  # Discord Bot
+  discord-bot:
+    build: .
+    environment:
+      - GRAPH_DATA_DIR=/app/data/graph
+      - CHROMA_PERSIST_DIR=/app/data/chroma
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - DISCORD_TOKEN=${DISCORD_TOKEN}
+      - DISCORD_GUILD_ID=${DISCORD_GUILD_ID}
+    volumes:
+      - ./data:/app/data
+      - ./.env:/app/.env
+    command: python -m insight_graph.ingest.discord_bot
+    restart: unless-stopped
+    depends_on:
+      - api
+
+volumes:
+  data:
+    driver: local
