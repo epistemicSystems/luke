@@ -1,0 +1,23 @@
+# Prometheus configuration for Insight Graph
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: 'insight-graph'
+    static_configs:
+      - targets: ['localhost:9090']
+        labels:
+          service: 'insight-graph'
+
+  - job_name: 'insight-graph-api'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['localhost:8000']
+        labels:
+          service: 'insight-graph-api'
+
+# Alerting rules
+rule_files:
+  - 'alerts.yml'

@@ -1,0 +1,72 @@
+# Prometheus alerting rules
+
+groups:
+  - name: insight_graph_alerts
+    interval: 30s
+    rules:
+      # Sentiment alerts
+      - alert: HighNegativeSentiment
+        expr: insight_graph_avg_sentiment < -0.5
+        for: 1h
+        labels:
+          severity: warning
+        annotations:
+          summary: "High negative sentiment detected"
+          description: "Community sentiment is {{ $value }}, below -0.5 threshold"
+
+      - alert: HighFrustration
+        expr: insight_graph_avg_frustration > 0.7
+        for: 30m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High community frustration"
+          description: "Frustration level is {{ $value }}, above 0.7 threshold"
+
+      # Issue alerts
+      - alert: ManyOpenIssues
+        expr: insight_graph_open_issues > 50
+        for: 1h
+        labels:
+          severity: info
+        annotations:
+          summary: "High number of open issues"
+          description: "{{ $value }} issues are currently open"
+
+      - alert: IssueBacklog
+        expr: rate(insight_graph_issues_created_total[1h]) > rate(insight_graph_issues_resolved_total[1h])
+        for: 4h
+        labels:
+          severity: warning
+        annotations:
+          summary: "Issues being created faster than resolved"
+          description: "Issue backlog is growing"
+
+      # Ingestion alerts
+      - alert: HighIngestionFailureRate
+        expr: rate(insight_graph_messages_failed_total[5m]) > 0.1
+        for: 10m
+        labels:
+          severity: critical
+        annotations:
+          summary: "High message ingestion failure rate"
+          description: "{{ $value }} messages/sec are failing to ingest"
+
+      - alert: NoMessagesIngested
+        expr: rate(insight_graph_messages_ingested_total[10m]) == 0
+        for: 30m
+        labels:
+          severity: warning
+        annotations:
+          summary: "No messages being ingested"
+          description: "Discord bot may be down"
+
+      # RAG performance
+      - alert: SlowRAGQueries
+        expr: histogram_quantile(0.95, rate(insight_graph_rag_query_duration_seconds_bucket[5m])) > 5
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "RAG queries are slow"
+          description: "95th percentile query time is {{ $value }}s"
