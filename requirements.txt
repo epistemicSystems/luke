@@ -1,0 +1,43 @@
+# Core dependencies
+python-dotenv==1.0.0
+pydantic==2.5.0
+pydantic-settings==2.1.0
+
+# Discord
+discord.py==2.3.2
+
+# LLM and embeddings
+openai==1.6.0
+tiktoken==0.5.2
+
+# Vector store
+chromadb==0.4.22
+
+# Data processing
+numpy==1.26.3
+pandas==2.1.4
+scipy==1.11.4
+scikit-learn==1.4.0
+
+# Graph analytics
+networkx==3.2.1
+python-igraph==0.11.3  # Optional: faster graph ops
+
+# NLP
+spacy==3.7.2
+sentence-transformers==2.2.2
+
+# API (optional)
+fastapi==0.109.0
+uvicorn==0.27.0
+websockets==12.0
+
+# Utilities
+pyyaml==6.0.1
+aiohttp==3.9.1
+tenacity==8.2.3
+rich==13.7.0  # Beautiful CLI output
+
+# Testing
+pytest==7.4.4
+pytest-asyncio==0.23.3
